@@ -88,9 +88,17 @@ function messenger(q) {
         ? `Calculated DP is ${money(q.target - q.total)} below the target.`
         : 'Target matches calculated DP.') + '\n';
 
-  const freebies = q.freebies.trim()
-    ? q.freebies.split('\n').map(x => `✔ ${x.trim()}`).join('\n')
-    : 'Not provided';
+  const freebies = [
+  'Tint',
+  'Toyota Carpet Matting',
+  'Seatcover',
+  'Toyota Black Pouch',
+  'Tools/Jack',
+  'Toyota Umbrella',
+  'Factory Rust Proof',
+  'Spare Tire',
+  '5 years warranty or 140,000 kms, whichever comes first.'
+].map(item => `✔ ${item}`).join('\n');
 
   return `🚙 ${q.model.toUpperCase()}
 Color: ${q.color}
@@ -117,7 +125,6 @@ ${standard.monthly}
 ✔ Chattel Mortgage at 20% DP: ${money(standard.chattel)}
 ✔ PMS Coverage: ${q.pms || 'Not provided'}
 
-TDA Discount: ${money(q.tda)}
 Promo Discount: Based on the original amount financed at each DP option (${q.pct}%).
 
 ✅ FREEBIES
