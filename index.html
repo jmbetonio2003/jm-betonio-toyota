@@ -61,7 +61,8 @@ function messenger(q) {
     const chattel = (financed / 200 * 1.5) + 9000;
     const promo = financed * q.pct / 100;
     const subtotal = initial + q.insurance + q.lto + chattel;
-    const totalDP = Math.max(0, subtotal - q.tda - promo);
+    const rawTotalDP = subtotal - q.tda - promo;
+const totalDP = rate === 0.15 ? Math.max(0, rawTotalDP) : rawTotalDP;
 
     const monthly = terms.map(t => {
       const amount = financed * t.rate / t.months + 1;
@@ -123,23 +124,17 @@ ${standard.monthly}
 ✔ LTO Registration: ${money(q.lto)}
 ✔ Chattel Mortgage at 15% DP: ${money(low.chattel)}
 ✔ Chattel Mortgage at 20% DP: ${money(standard.chattel)}
-✔ PMS Coverage: ${q.pms || 'Not provided'}
-
-Promo Discount: Based on the original amount financed at each DP option (${q.pct}%).
+✔ PMS Coverage: ₱20,000
 
 ✅ FREEBIES
 ${freebies}
-
-TFS / Affiliate-Bank Approval Cashouts:
-${q.cashouts || 'Not provided'}
 
 ${targetText}
 JM Betonio
 09053787903
 Toyota Tarlac
 
-*All figures are estimates subject to confirmation and financing approval. Any additional discount is a proposal only and is not approved unless separately confirmed.*`;
-}
+
 
 function render(q){$('empty').hidden=true;$('out').hidden=false;$('name').textContent=`${q.model} · ${q.color} · ${q.term} months`;$('total').textContent=money(q.total);$('dpRows').innerHTML=row('Unit price',money(q.price))+row(`Initial DP (${q.dp}%)`,money(q.initial))+row('Amount financed',money(q.financed))+row('Insurance',money(q.insurance))+row('LTO',money(q.lto))+row(`Chattel mortgage (${q.dp<=30?'Leasing':'Financing'})`,money(q.chattel))+row('DP subtotal before discounts',money(q.subtotal))+row('TDA discount (manual)', '−'+money(q.tda))+row(`Promo discount (${q.pct}%)`,'−'+money(q.promo));$('monthlyRows').innerHTML=row('Multiplier',q.mult.toFixed(4))+row('Unadjusted monthly amount',money(q.raw))+row('Displayed monthly (+₱1)',money(q.shown));$('targetBlock').hidden=q.target===null;if(q.target!==null){let gap=q.total-q.target,txt=gap>0?`Additional discount needed: ${money(gap)}. Proposal only; not approved.`:gap<0?`Target is ${money(-gap)} above the calculated DP.`:'Target exactly matches calculated DP.';$('targetRows').innerHTML=row('Client target DP',money(q.target))+row('Calculated DP − target',money(gap))+`<div class="notice">${esc(txt)}</div>`}$('otherRows').innerHTML=row('TFS / affiliate-bank cashouts',esc(q.cashouts||'Not provided'))+row('PMS coverage',esc(q.pms||'Not provided'))+row('Confirmed freebies',esc(q.freebies||'Not provided'));$('messenger').value=messenger(q);$('textBox').hidden=true;$('status').textContent=''}
 $('form').onsubmit=e=>{e.preventDefault();$('error').style.display='none';try{current=calc(data());render(current)}catch(err){$('error').textContent=err.message;$('error').style.display='block'}};
