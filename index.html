@@ -20,11 +20,13 @@
 <div class="field"><label>LTO (₱) *</label><input id="lto" type="number" min="0" step=".01" required></div>
 <div class="field"><label>TDA discount amount (₱) *</label><input id="tda" type="number" min="0" step=".01" required placeholder="Enter 0 if none"></div>
 <div class="field"><label>Promo status *</label><select id="promoStatus" required><option value="">Choose</option><option value="yes">Yes, promo applies</option><option value="no">No promo</option></select></div>
-<div class="field" id="promoField" style="display:none"><label>Promo discount (%) *</label><input id="promoPct" type="number" min="0" max="100" step="any" placeholder="e.g. 10.5"><span class="hint">Uses original amount financed.</span></div>
+<div class="field"><label>Second DP percentage (%) *</label><input id="otherDpPct" type="number" min="0" max="100" step="any" value="20" required><span class="hint">Used for the second quotation option (e.g. 20%, 25%, or 30%).</span></div>
+<div class="field" id="promoField15" style="display:none"><label>Promo discount for 15% DP (%) *</label><input id="promoPct15" type="number" min="0" max="100" step="any" placeholder="e.g. 10.5"><span class="hint">Uses the original amount financed at 15% DP.</span></div>
+<div class="field" id="promoFieldOther" style="display:none"><label>Promo discount for second DP (%) *</label><input id="promoPctOther" type="number" min="0" max="100" step="any" placeholder="e.g. 5"><span class="hint">Uses the original amount financed at the second DP percentage.</span></div>
 </div></div>
 <div class="card"><h2>3 · Other quotation details</h2><div class="fields">
 <div class="field full"><label>TFS / affiliate-bank approval cashouts</label><input id="cashouts" placeholder="Not provided, or confirmed details"></div>
-<div class="field"><label>PMS coverage</label><input id="pms" placeholder="Not provided, or confirmed coverage"></div>
+<div class="field"><label>PMS coverage</label><input id="pms" type="number" value="20000" readonly></div>
 <div class="field"><label>Confirmed freebies</label><textarea id="freebies" placeholder="Only confirmed freebies"></textarea></div>
 <div class="field full"><label>Internal notes (not in Messenger text)</label><textarea id="notes" placeholder="Optional private note"></textarea></div>
 </div><div class="err" id="error"></div><div class="actions"><button class="primary" type="submit">Calculate quotation</button><button class="secondary" id="clear" type="button">Clear form</button></div></div>
@@ -38,9 +40,14 @@
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),rates={36:1.4273,48:1.5126,60:1.6046},key='toyotaCalculatorQuotesV1';let current=null,quotes=[];try{quotes=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(quotes))quotes=[]}catch(e){quotes=[]}
 const money=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}),row=(a,b)=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-$('promoStatus').onchange=()=>{$('promoField').style.display=$('promoStatus').value==='yes'?'flex':'none';$('promoPct').required=$('promoStatus').value==='yes'};
-function data(){let d={};['model','color','price','dp','term','target','insurance','lto','tda','promoStatus','promoPct','cashouts','pms','freebies','notes'].forEach(k=>d[k]=$(k).value.trim());return d}
-function calc(d){let price=+d.price,dp=+d.dp,term=+d.term,insurance=+d.insurance,lto=+d.lto,tda=+d.tda;if(!d.model||!d.color)throw Error('Enter model/variant and color.');if(!Number.isFinite(price)||price<=0)throw Error('Enter a valid unit price.');if(!Number.isFinite(dp)||dp<0||dp>100)throw Error('DP must be between 0% and 100%.');if(!rates[term])throw Error('Choose a loan term.');if(![insurance,lto,tda].every(x=>Number.isFinite(x)&&x>=0))throw Error('Enter valid non-negative insurance, LTO, and TDA amounts. Enter 0 if none.');if(!['yes','no'].includes(d.promoStatus))throw Error('Choose promo status.');let pct=0;if(d.promoStatus==='yes'){pct=+d.promoPct;if(d.promoPct===''||!Number.isFinite(pct)||pct<0||pct>100)throw Error('Enter a promo percentage from 0 to 100.')}if(dp>30&&dp<31)throw Error('DP falls between 30% and 31%; confirm the chattel category before calculating.');let initial=price*dp/100,financed=price*(1-dp/100),mult=rates[term],raw=financed*mult/term,shown=raw+1,chattel=dp<=30?(financed/200*1.5)+9000:raw*.025*term,promo=financed*pct/100,subtotal=initial+insurance+lto+chattel,total=Math.max(0,subtotal-tda-promo);let target=null;if(d.target!==''){target=+d.target;if(!Number.isFinite(target)||target<0)throw Error('Target DP must be a non-negative amount.')}return {...d,price,dp,term,insurance,lto,tda,pct,initial,financed,mult,raw,shown,chattel,promo,subtotal,total,target,createdAt:new Date().toISOString()}}
+$('promoStatus').onchange=()=>{
+  const enabled=$('promoStatus').value==='yes';
+  ['promoField15','promoFieldOther'].forEach(id=>$(id).style.display=enabled?'flex':'none');
+  $('promoPct15').required=enabled;
+  $('promoPctOther').required=enabled;
+};
+function data(){let d={};['model','color','price','dp','term','target','insurance','lto','tda','promoStatus','otherDpPct','promoPct15','promoPctOther','cashouts','pms','freebies','notes'].forEach(k=>d[k]=$(k).value.trim());return d}
+function calc(d){let price=+d.price,dp=+d.dp,term=+d.term,insurance=+d.insurance,lto=+d.lto,tda=+d.tda;if(!d.model||!d.color)throw Error('Enter model/variant and color.');if(!Number.isFinite(price)||price<=0)throw Error('Enter a valid unit price.');if(!Number.isFinite(dp)||dp<0||dp>100)throw Error('DP must be between 0% and 100%.');if(!rates[term])throw Error('Choose a loan term.');if(![insurance,lto,tda].every(x=>Number.isFinite(x)&&x>=0))throw Error('Enter valid non-negative insurance, LTO, and TDA amounts. Enter 0 if none.');if(!['yes','no'].includes(d.promoStatus))throw Error('Choose promo status.');let otherDpPct=+d.otherDpPct,pct15=0,pctOther=0;if(d.otherDpPct===''||!Number.isFinite(otherDpPct)||otherDpPct<0||otherDpPct>100)throw Error('Enter the second DP percentage from 0 to 100.');if(d.promoStatus==='yes'){pct15=+d.promoPct15;pctOther=+d.promoPctOther;if(d.promoPct15===''||!Number.isFinite(pct15)||pct15<0||pct15>100)throw Error('Enter a promo percentage for 15% DP from 0 to 100.');if(d.promoPctOther===''||!Number.isFinite(pctOther)||pctOther<0||pctOther>100)throw Error('Enter a promo percentage for the second DP from 0 to 100.')}if(dp>30&&dp<31)throw Error('DP falls between 30% and 31%; confirm the chattel category before calculating.');let initial=price*dp/100,financed=price*(1-dp/100),mult=rates[term],raw=financed*mult/term,shown=raw+1,chattel=dp<=30?(financed/200*1.5)+9000:raw*.025*term,activePromoPct=Math.abs(dp-15)<0.000001?pct15:(Math.abs(dp-otherDpPct)<0.000001?pctOther:0),promo=financed*activePromoPct/100,subtotal=initial+insurance+lto+chattel,total=Math.max(0,subtotal-tda-promo);let target=null;if(d.target!==''){target=+d.target;if(!Number.isFinite(target)||target<0)throw Error('Target DP must be a non-negative amount.')}return {...d,price,dp,term,insurance,lto,tda,pct15,pctOther,otherDpPct,activePromoPct,mult,raw,shown,chattel,promo,subtotal,total,target,createdAt:new Date().toISOString()}}
 
 function messenger(q) {
   const money = n => '₱' + Number(n).toLocaleString('en-PH', {
@@ -54,32 +61,27 @@ function messenger(q) {
     { months: 36, years: 3, rate: 1.4273 }
   ];
 
-  function option(rate) {
+  function option(rate, promoPct) {
     const initial = q.price * rate;
     const financed = q.price - initial;
     const rawMonthly = financed * terms[0].rate / 60;
     const chattel = (financed / 200 * 1.5) + 9000;
-    const promo = financed * q.pct / 100;
+    const promo = financed * promoPct / 100;
     const subtotal = initial + q.insurance + q.lto + chattel;
     const rawTotalDP = subtotal - q.tda - promo;
-const totalDP = rate === 0.15 ? Math.max(0, rawTotalDP) : rawTotalDP;
+    const totalDP = rate === 0.15 ? Math.max(0, rawTotalDP) : rawTotalDP;
 
     const monthly = terms.map(t => {
       const amount = financed * t.rate / t.months + 1;
       return `Monthly for ${t.years} years: ${money(amount)}`;
     }).join('\n');
 
-    return {
-      rate: rate * 100,
-      totalDP,
-      monthly,
-      chattel,
-      rawMonthly
-    };
+    return { rate: rate * 100, totalDP, monthly, chattel, rawMonthly, promo };
   }
 
-  const low = option(0.15);
-  const standard = option(0.20);
+  const low = option(0.15, q.promoStatus === 'yes' ? (q.pct15 || 0) : 0);
+  const standardRate = Number(q.otherDpPct ?? 20) / 100;
+  const standard = option(standardRate, q.promoStatus === 'yes' ? (q.pctOther || 0) : 0);
 
   const targetText = q.target === null ? '' :
     `\nCLIENT TARGET DP: ${money(q.target)}\n` +
@@ -113,7 +115,7 @@ Monthly Amortization:
 ${low.monthly}
 
 ✅ OPTION 2 (STANDARD DP):
-ALL IN DOWNPAYMENT 20%
+ALL IN DOWNPAYMENT ${standardRate * 100}%
 Estimated All-In DP: ${money(standard.totalDP)}
 
 Monthly Amortization:
@@ -123,28 +125,34 @@ ${standard.monthly}
 ✔ 1 Year Comprehensive Insurance: ${money(q.insurance)}
 ✔ LTO Registration: ${money(q.lto)}
 ✔ Chattel Mortgage at 15% DP: ${money(low.chattel)}
-✔ Chattel Mortgage at 20% DP: ${money(standard.chattel)}
+✔ Chattel Mortgage at ${standardRate * 100}% DP: ${money(standard.chattel)}
 ✔ PMS Coverage: ₱20,000
+
+Promo Discount: 15% DP uses ${q.pct15 || 0}%; ${standardRate * 100}% DP uses ${q.pctOther || 0}%. Each promo is calculated separately on that option's original amount financed.
 
 ✅ FREEBIES
 ${freebies}
+
+TFS / Affiliate-Bank Approval Cashouts:
+${q.cashouts || 'Not provided'}
 
 ${targetText}
 JM Betonio
 09053787903
 Toyota Tarlac
 
+*All figures are estimates subject to confirmation and financing approval. Any additional discount is a proposal only and is not approved unless separately confirmed.*`;
+}
 
-
-function render(q){$('empty').hidden=true;$('out').hidden=false;$('name').textContent=`${q.model} · ${q.color} · ${q.term} months`;$('total').textContent=money(q.total);$('dpRows').innerHTML=row('Unit price',money(q.price))+row(`Initial DP (${q.dp}%)`,money(q.initial))+row('Amount financed',money(q.financed))+row('Insurance',money(q.insurance))+row('LTO',money(q.lto))+row(`Chattel mortgage (${q.dp<=30?'Leasing':'Financing'})`,money(q.chattel))+row('DP subtotal before discounts',money(q.subtotal))+row('TDA discount (manual)', '−'+money(q.tda))+row(`Promo discount (${q.pct}%)`,'−'+money(q.promo));$('monthlyRows').innerHTML=row('Multiplier',q.mult.toFixed(4))+row('Unadjusted monthly amount',money(q.raw))+row('Displayed monthly (+₱1)',money(q.shown));$('targetBlock').hidden=q.target===null;if(q.target!==null){let gap=q.total-q.target,txt=gap>0?`Additional discount needed: ${money(gap)}. Proposal only; not approved.`:gap<0?`Target is ${money(-gap)} above the calculated DP.`:'Target exactly matches calculated DP.';$('targetRows').innerHTML=row('Client target DP',money(q.target))+row('Calculated DP − target',money(gap))+`<div class="notice">${esc(txt)}</div>`}$('otherRows').innerHTML=row('TFS / affiliate-bank cashouts',esc(q.cashouts||'Not provided'))+row('PMS coverage',esc(q.pms||'Not provided'))+row('Confirmed freebies',esc(q.freebies||'Not provided'));$('messenger').value=messenger(q);$('textBox').hidden=true;$('status').textContent=''}
+function render(q){$('empty').hidden=true;$('out').hidden=false;$('name').textContent=`${q.model} · ${q.color} · ${q.term} months`;$('total').textContent=money(q.total);$('dpRows').innerHTML=row('Unit price',money(q.price))+row(`Initial DP (${q.dp}%)`,money(q.initial))+row('Amount financed',money(q.financed))+row('Insurance',money(q.insurance))+row('LTO',money(q.lto))+row(`Chattel mortgage (${q.dp<=30?'Leasing':'Financing'})`,money(q.chattel))+row('DP subtotal before discounts',money(q.subtotal))+row('TDA discount (manual)', '−'+money(q.tda))+row(`Promo discount for entered DP (${q.activePromoPct || 0}%)`,'−'+money(q.promo))+row(`Promo discount for 15% DP`,`${q.pct15 || 0}%`)+row(`Promo discount for ${q.otherDpPct}% DP`,`${q.pctOther || 0}%`);$('monthlyRows').innerHTML=row('Multiplier',q.mult.toFixed(4))+row('Unadjusted monthly amount',money(q.raw))+row('Displayed monthly (+₱1)',money(q.shown));$('targetBlock').hidden=q.target===null;if(q.target!==null){let gap=q.total-q.target,txt=gap>0?`Additional discount needed: ${money(gap)}. Proposal only; not approved.`:gap<0?`Target is ${money(-gap)} above the calculated DP.`:'Target exactly matches calculated DP.';$('targetRows').innerHTML=row('Client target DP',money(q.target))+row('Calculated DP − target',money(gap))+`<div class="notice">${esc(txt)}</div>`}$('otherRows').innerHTML=row('TFS / affiliate-bank cashouts',esc(q.cashouts||'Not provided'))+row('PMS coverage','₱20,000')+row('Confirmed freebies',esc(q.freebies||'Not provided'));$('messenger').value=messenger(q);$('textBox').hidden=true;$('status').textContent=''}
 $('form').onsubmit=e=>{e.preventDefault();$('error').style.display='none';try{current=calc(data());render(current)}catch(err){$('error').textContent=err.message;$('error').style.display='block'}};
-$('clear').onclick=()=>{if(confirm('Clear the form?')){$('form').reset();$('promoField').style.display='none';$('promoPct').required=false;current=null;$('out').hidden=true;$('empty').hidden=false;$('error').style.display='none'}};
+$('clear').onclick=()=>{if(confirm('Clear the form?')){$('form').reset();['promoField15','promoFieldOther'].forEach(id=>$(id).style.display='none');$('promoPct15').required=false;$('promoPctOther').required=false;current=null;$('out').hidden=true;$('empty').hidden=false;$('error').style.display='none'}};
 function persist(){localStorage.setItem(key,JSON.stringify(quotes));history()}
 $('save').onclick=()=>{if(!current)return;quotes.unshift({...current,id:(crypto.randomUUID?crypto.randomUUID():String(Date.now()))});try{persist();$('status').textContent='Saved in this browser.'}catch(e){$('status').textContent='Could not save. Check browser storage settings or export your details.'}};
 $('showText').onclick=()=>{$('textBox').hidden=!$('textBox').hidden;if(current)$('messenger').value=messenger(current)};
 $('copy').onclick=async()=>{if(!current)return;let text=messenger(current);try{await navigator.clipboard.writeText(text);$('status').textContent='Messenger text copied.'}catch(e){$('textBox').hidden=false;$('messenger').value=text;$('messenger').focus();$('messenger').select();$('status').textContent='Clipboard access unavailable; select and copy the text below.'}};
 function history(){ $('count').textContent=quotes.length;if(!quotes.length){$('history').innerHTML='No saved quotations yet.';return}$('history').innerHTML=quotes.map(q=>`<div class="history"><b>${esc(q.model)} · ${esc(q.color)}</b><div class="muted">${new Date(q.createdAt).toLocaleString()} · ${esc(q.term)} months</div><b>${money(q.total)} total DP</b><div class="actions"><button class="secondary" data-a="load" data-id="${esc(q.id)}">Load</button><button class="secondary" data-a="copy" data-id="${esc(q.id)}">Copy text</button><button class="danger" data-a="del" data-id="${esc(q.id)}">Delete</button></div></div>`).join('')}
-$('history').onclick=async e=>{let b=e.target.closest('button[data-a]');if(!b)return;let q=quotes.find(x=>x.id===b.dataset.id);if(!q)return;if(b.dataset.a==='del'&&confirm('Delete saved quotation?')){quotes=quotes.filter(x=>x.id!==q.id);persist()}if(b.dataset.a==='load'){['model','color','price','dp','term','target','insurance','lto','tda','promoStatus','promoPct','cashouts','pms','freebies','notes'].forEach(k=>$(k).value=q[k]??'');$('promoField').style.display=q.promoStatus==='yes'?'flex':'none';$('promoPct').required=q.promoStatus==='yes';current=q;render(q);window.scrollTo({top:0,behavior:'smooth'})}if(b.dataset.a==='copy'){try{await navigator.clipboard.writeText(messenger(q));alert('Copied Messenger quotation.')}catch(err){prompt('Copy this quotation:',messenger(q))}}};
+$('history').onclick=async e=>{let b=e.target.closest('button[data-a]');if(!b)return;let q=quotes.find(x=>x.id===b.dataset.id);if(!q)return;if(b.dataset.a==='del'&&confirm('Delete saved quotation?')){quotes=quotes.filter(x=>x.id!==q.id);persist()}if(b.dataset.a==='load'){['model','color','price','dp','term','target','insurance','lto','tda','promoStatus','otherDpPct','promoPct15','promoPctOther','cashouts','pms','freebies','notes'].forEach(k=>$(k).value=q[k]??'');['promoField15','promoFieldOther'].forEach(id=>$(id).style.display=q.promoStatus==='yes'?'flex':'none');$('promoPct15').required=q.promoStatus==='yes';$('promoPctOther').required=q.promoStatus==='yes';$('otherDpPct').value=q.otherDpPct??20;current=q;render(q);window.scrollTo({top:0,behavior:'smooth'})}if(b.dataset.a==='copy'){try{await navigator.clipboard.writeText(messenger(q));alert('Copied Messenger quotation.')}catch(err){prompt('Copy this quotation:',messenger(q))}}};
 $('export').onclick=()=>{let blob=new Blob([JSON.stringify(quotes,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='toyota-quotations-backup.json';a.click();URL.revokeObjectURL(url)};
 $('import').onclick=()=>$('file').click();$('file').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let a=JSON.parse(await f.text());if(!Array.isArray(a))throw Error('Invalid backup format');if(confirm(`Import ${a.length} quotations?`)){let ids=new Set(quotes.map(q=>q.id));a.forEach(q=>{if(q&&q.model){if(!q.id||ids.has(q.id))q.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random());quotes.push(q)}});persist();alert('Import complete.')}}catch(err){alert('Could not import: '+err.message)}finally{$('file').value=''}};
 history();
