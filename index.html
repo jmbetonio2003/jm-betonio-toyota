@@ -1,17 +1,19 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JM BETONIO TOYOTA | Car Sales Calculator</title>
 <style>
-:root{--red:#eb0a1e;--ink:#202124;--muted:#667085;--line:#e5e7eb;--bg:#f5f6f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 Arial,sans-serif;color:var(--ink)}header{background:#171717;color:white;padding:20px max(16px,calc((100% - 1100px)/2));border-bottom:5px solid var(--red)}header b{background:var(--red);padding:9px;border-radius:7px;margin-right:10px}main{max-width:1100px;margin:20px auto;padding:0 14px 40px}.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:15px}.card h2{font-size:17px;margin:0 0 14px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}label{font-size:12px;font-weight:bold;color:#424854}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid #cbd0d8;border-radius:8px;background:white}textarea{min-height:66px}button{font:inherit;font-weight:bold;border:0;border-radius:8px;padding:11px 13px;cursor:pointer}.primary{background:var(--red);color:white}.secondary{background:#f0f1f3;color:#222;border:1px solid #ddd}.danger{background:#fff0f0;color:#9b1020}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.muted,.hint{color:var(--muted);font-size:12px}.notice{background:#fff4f4;border:1px solid #ffd4d8;border-radius:9px;padding:12px;margin-bottom:15px}.err{display:none;background:#fff0f0;border:1px solid #efb7bf;color:#851320;padding:10px;border-radius:8px;margin-bottom:10px}.result{position:sticky;top:10px}.big{font-size:28px;font-weight:800;color:#137547}.subhead{font-size:11px;font-weight:bold;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin:16px 0 5px}.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #f0f1f3}.row span:first-child{color:#515866}.row strong{text-align:right;font-variant-numeric:tabular-nums}.empty{font-size:13px;color:var(--muted)}.history{padding:12px 0;border-bottom:1px solid var(--line)}.pill{background:#fce8ea;color:#9e0b1b;padding:3px 8px;border-radius:20px;font-size:11px}@media(max-width:760px){.layout{grid-template-columns:1fr}.result{position:static}}@media(max-width:480px){.fields{grid-template-columns:1fr}.full{grid-column:auto}}
+:root{--red:#d71935;--ink:#182230;--muted:#64748b;--line:rgba(148,163,184,.24);--bg:#eaf0f7;--glass:rgba(255,255,255,.66);--glass-strong:rgba(255,255,255,.82);--shadow:0 18px 48px rgba(38,55,77,.10)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 4%,rgba(161,197,255,.55),transparent 34%),radial-gradient(ellipse at 90% 16%,rgba(213,225,244,.9),transparent 38%),linear-gradient(145deg,#f7f9fc,#e8eef6 58%,#f4f7fb);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;color:var(--ink)}
+header{position:sticky;top:10px;z-index:5;max-width:1100px;margin:14px auto 22px;padding:15px 20px;background:rgba(255,255,255,.62);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,.8);border-radius:22px;box-shadow:var(--shadow);color:var(--ink)}header b{display:inline-block;background:linear-gradient(135deg,#e51b36,#a90e25);color:#fff;padding:8px 11px;border-radius:11px;margin-right:10px;box-shadow:0 5px 14px rgba(215,25,53,.22)}header strong{font-size:clamp(20px,3vw,28px);letter-spacing:-.5px}header div{color:#64748b!important}
+main{max-width:1100px;margin:0 auto;padding:0 14px 44px}.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}.card{background:var(--glass);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.86);border-radius:22px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.9)}.card h2{font-size:17px;letter-spacing:-.2px;margin:0 0 16px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:#43516a;letter-spacing:.15px}input,select,textarea{font:inherit;width:100%;padding:12px 13px;border:1px solid rgba(148,163,184,.38);border-radius:13px;background:rgba(255,255,255,.72);color:var(--ink);outline:none;box-shadow:inset 0 1px 2px rgba(30,50,80,.035);transition:border-color .18s,box-shadow .18s,background .18s}input:focus,select:focus,textarea:focus{border-color:rgba(55,117,220,.62);background:rgba(255,255,255,.95);box-shadow:0 0 0 4px rgba(75,135,230,.12)}input::placeholder,textarea::placeholder{color:#9aa5b5}textarea{min-height:66px}button{font:inherit;font-weight:700;border:1px solid transparent;border-radius:13px;padding:11px 16px;cursor:pointer;transition:transform .16s,box-shadow .16s,filter .16s}button:hover{transform:translateY(-1px)}button:active{transform:scale(.98)}.primary{background:linear-gradient(135deg,#e51b36,#b80f2b);color:white;box-shadow:0 8px 18px rgba(190,20,48,.2)}.secondary{background:rgba(255,255,255,.68);color:#27364a;border-color:rgba(148,163,184,.28);box-shadow:0 4px 12px rgba(35,55,80,.05)}.danger{background:rgba(255,235,238,.8);color:#9b1020;border-color:rgba(220,80,100,.18)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.muted,.hint{color:var(--muted);font-size:12px}.notice{background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.88);border-radius:17px;padding:14px;margin-bottom:12px;box-shadow:inset 0 1px 0 #fff}.err{display:none;background:#fff0f0;border:1px solid #efb7bf;color:#851320;padding:10px;border-radius:12px;margin-bottom:10px}.result{position:sticky;top:104px}.big{font-size:28px;font-weight:800;color:#137547}.subhead{font-size:11px;font-weight:800;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin:16px 0 7px}.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(148,163,184,.18)}.row span:first-child{color:#536176}.row strong{text-align:right;font-variant-numeric:tabular-nums;color:#172438}.empty{font-size:13px;color:var(--muted)}.history{padding:12px 0;border-bottom:1px solid var(--line)}.pill{background:rgba(215,25,53,.1);color:#a30e27;padding:3px 8px;border-radius:20px;font-size:11px}@media(max-width:760px){header{margin:10px 10px 18px;top:6px}.layout{grid-template-columns:1fr}.result{position:static}}@media(max-width:480px){.fields{grid-template-columns:1fr}.full{grid-column:auto}main{padding-inline:10px}.card{padding:16px;border-radius:19px}}
 </style></head><body>
 <header><b>TOYOTA</b><strong style="font-size:clamp(20px,3vw,28px);letter-spacing:.3px">JM BETONIO TOYOTA</strong><div style="font-size:14px;color:#f3f3f3;margin-top:5px">Car Sales Calculator</div><div style="font-size:12px;color:#ddd;margin-top:6px">Quotation builder · DP targets · Messenger-ready output</div></header>
 <main>
 <div class="layout"><section>
-<form id="form">
+<form id="form" novalidate>
 <div class="card"><h2>1 · Vehicle & loan details</h2><div class="fields">
 <div class="field"><label>Model *</label><select id="model" required><option value="">Choose model</option></select></div><div class="field"><label>Variant *</label><select id="variant" required disabled><option value="">Choose model first</option></select></div>
-<div class="field"><label>Color *</label><input id="color" required placeholder="e.g. Gray"></div>
+<div class="field"><label>Color</label><input id="color" placeholder="e.g. Gray"></div>
 <div class="field"><label>Unit price (₱) *</label><input id="price" type="number" min=".01" step=".01" required placeholder="942000"></div>
-<div class="field"><label>Entered DP percentage (%) *</label><input id="dp" type="number" min="15" max="100" step="any" required placeholder="20"><span class="hint">Minimum DP is 15%.</span></div>
 <div class="field"><label>Client target monthly (₱, optional)</label><input id="targetMonthly" type="number" min="0" step=".01" placeholder="e.g. 15000"></div>
 <div class="field"><label>Client target ALL-IN DP (₱, optional)</label><input id="targetDpAmount" type="number" min="0" step=".01" placeholder="e.g. 150000"></div>
 <div class="field"><label>Promo discount for Client Targets (%)</label><input id="targetDpPromoPct" type="number" min="0" max="100" step="any" value="0"><span class="hint">Applies to Client Target ALL-IN DP and Client Target Monthly. Independent of Option 1 and Option 2.</span></div>
@@ -33,7 +35,7 @@
 <div class="card"><h2>Saved quotations <span class="pill" id="count">0</span></h2><p class="muted">Stored locally in this browser. Export a backup to keep a copy.</p><div class="actions"><button class="secondary" id="export" type="button">Export backup</button><button class="secondary" id="import" type="button">Import backup</button><input id="file" type="file" accept=".json,application/json" hidden></div><div id="history" class="empty">No saved quotations yet.</div></div>
 </section>
 <aside class="card result"><h2>Quotation result</h2><div id="empty" class="empty">Fill in the required details and calculate.</div><div id="out" hidden>
-<div id="name" class="muted"></div><div class="subhead">Total DP after discounts</div><div class="big" id="total"></div><div class="subhead">Detailed DP calculation (entered DP)</div><div id="dpRows"></div><div class="subhead">Both DP option computations</div><div id="optionRows"></div><div class="subhead">Monthly amortization</div><div id="monthlyRows"></div><div id="targetBlock" hidden><div class="subhead">Client target DP comparison</div><div id="targetRows"></div></div><div id="targetMonthlyBlock" hidden><div class="subhead">DP needed for target monthly</div><div id="targetMonthlyRows"></div></div><div class="subhead">PMS benefit</div><div id="pmsRow"></div>
+<div id="name" class="muted"></div><div class="subhead">Both DP option computations</div><div id="optionRows"></div><div id="targetBlock" hidden><div class="subhead">Client target DP comparison</div><div id="targetRows"></div></div><div id="targetMonthlyBlock" hidden><div class="subhead">DP needed for target monthly</div><div id="targetMonthlyRows"></div></div>
 <div class="actions"><button class="primary" id="save" type="button">Save quotation</button><button class="secondary" id="showText" type="button">Show Messenger text</button><button class="secondary" id="copy" type="button">Copy Messenger text</button></div><p id="status" class="muted"></p><div id="textBox" hidden><label>Client-ready Messenger quotation</label><textarea id="messenger" rows="17" readonly></textarea></div>
 </div></aside></div></main>
 <script>
@@ -64,7 +66,7 @@ const modelVariants={"Fortuner": ["2.8L 4x4 GRS AT", "2.8L 4x4 LTD AT", "2.8L 4x
 
 function data(){
   const d={};
-  ['model','variant','color','price','dp','targetMonthly','targetDpAmount','targetDpPromoPct','insurance','lto','tda','promoStatus','chattelTerm','firstDpPct','otherDpPct','promoPct15','promoPctOther'].forEach(k=>d[k]=$(k).value.trim());
+  ['model','variant','color','price','targetMonthly','targetDpAmount','targetDpPromoPct','insurance','lto','tda','promoStatus','chattelTerm','firstDpPct','otherDpPct','promoPct15','promoPctOther'].forEach(k=>d[k]=$(k).value.trim());
   d.model=$('model').value;
   d.variant=$('variant').value;
   d.modelDisplay=d.model+' '+d.variant;
@@ -78,17 +80,16 @@ function category(rate){
 }
 
 function chattelMortgage(financed,rate,term){
-  if(category(rate)==='Leasing')return (financed/200*1.5)+9000;
-  return monthlyFor(financed,term)*0.025*term;
+  if(category(rate)==='Leasing')return (financed/200*1.5)+9000+1;
+  return monthlyFor(financed,term)*0.025*term+1;
 }
 
 function calc(d){
-  const price=Number(d.price),dp=Number(d.dp);
+  const price=Number(d.price);
   const term=Number(d.chattelTerm||60);
   const insurance=Number(d.insurance),lto=Number(d.lto),tda=Number(d.tda);
-  if(!d.model||!d.variant||!d.color)throw Error('Enter model/variant and color.');
+  if(!d.model||!d.variant)throw Error('Choose a model and variant.');
   if(!Number.isFinite(price)||price<=0)throw Error('Enter a valid unit price.');
-  if(!Number.isFinite(dp)||dp<15||dp>100)throw Error('DP must be between 15% and 100%.');
   if(![insurance,lto,tda].every(x=>Number.isFinite(x)&&x>=0))throw Error('Enter valid non-negative insurance, LTO, and TDA amounts. Enter 0 if none.');
   if(![36,48,60].includes(term))throw Error('Choose a valid financing chattel term.');
   if(!['yes','no'].includes(d.promoStatus))throw Error('Choose promo status.');
@@ -103,7 +104,7 @@ function calc(d){
     if(d.promoPct15===''||!Number.isFinite(pctFirst)||pctFirst<0||pctFirst>100)throw Error('Enter a valid promo percentage for the first DP option.');
     if(d.promoPctOther===''||!Number.isFinite(pctOther)||pctOther<0||pctOther>100)throw Error('Enter a valid promo percentage for the second DP option.');
   }
-  category(dp);category(firstDpPct);category(otherDpPct);
+  category(firstDpPct);category(otherDpPct);
 
   const hasClientTarget=d.targetMonthly!==''||d.targetDpAmount!=='';
   const clientTargetPromoPct=d.targetDpPromoPct===''?0:Number(d.targetDpPromoPct);
@@ -121,8 +122,6 @@ function calc(d){
     return {rate,initial,financed,chattel,subtotal,tda,promoPct,promo,totalDP:Math.max(0,subtotal-tda-promo),monthly:selectedMonthly,monthlyByTerm:monthlyByTerm(financed),category:category(rate)};
   };
 
-  const activePromoPct=Math.abs(dp-firstDpPct)<1e-7?pctFirst:(Math.abs(dp-otherDpPct)<1e-7?pctOther:0);
-  const entered=makeScenario(dp,d.promoStatus==='yes'?activePromoPct:0);
   const optionFirst=makeScenario(firstDpPct,d.promoStatus==='yes'?pctFirst:0);
   const optionOther=makeScenario(otherDpPct,d.promoStatus==='yes'?pctOther:0);
 
@@ -179,7 +178,7 @@ function calc(d){
     }
   }
 
-  return {...d,model:d.model,variant:d.variant,price,dp,term,chattelTerm:term,initial:entered.initial,financed:entered.financed,insurance,lto,tda,pct15:pctFirst,pctFirst,pctOther,firstDpPct,otherDpPct,activePromoPct,mult:rates[term],raw:entered.monthly,shown:entered.monthly,chattel:entered.chattel,promo:entered.promo,subtotal:entered.subtotal,total:entered.totalDP,option15:optionFirst,optionFirst,optionOther,targetMonthly,targetMonthlyResult,targetDpAmount,targetDpResult,targetDpPromoPct:clientTargetPromoPct,createdAt:new Date().toISOString()};
+  return {...d,model:d.model,variant:d.variant,price,term,chattelTerm:term,insurance,lto,tda,pct15:pctFirst,pctFirst,pctOther,firstDpPct,otherDpPct,mult:rates[term],option15:optionFirst,optionFirst,optionOther,targetMonthly,targetMonthlyResult,targetDpAmount,targetDpResult,targetDpPromoPct:clientTargetPromoPct,createdAt:new Date().toISOString()};
 }
 
 function messenger(q){
@@ -211,18 +210,15 @@ function messenger(q){
   }
   const freebies=['Genuine Tint','Genuine Toyota Carpet Matting','Genuine Toyota Seatcover','Toyota Black Pouch','Tools/Jack','Toyota Umbrella','Factory Rust Proofing','Spare Tire','Free Gas','Leather Booklet','5yrs warranty or 140,000 kms whichever comes first.'].map(x=>`✔ ${x}`).join('\n');
   const pmsBenefit=pmsFor(q.model,q.variant);
-  return `🚙 ${q.model.toUpperCase()} ${q.variant}\nColor: ${q.color}\nUnit Price: ${moneyText(q.price)}\n\n✅ OPTION 1 (${q.firstDpPct??q.pctFirst??15}% DP)\nEstimated All-In DP: ${moneyText(first.totalDP)}\nMonthly Amortization:\n${first.monthly}\n\n✅ OPTION 2 (${q.otherDpPct}% DP)\nEstimated All-In DP: ${moneyText(second.totalDP)}\nMonthly Amortization:\n${second.monthly}\n${targetMonthlyText}${targetDpText}\n✅ ALL-IN INCLUSIONS\n✔ 1 Year Comprehensive Insurance\n✔ LTO Registration\n✔ Chattel mortgage\n✔ ${pmsBenefit}\n\n✅ FREEBIES\n${freebies}\n\nJM Betonio\n09053787903\nToyota Tarlac`;
+  return `🚙 ${q.model.toUpperCase()} ${q.variant}\nColor: ${q.color||'Not specified'}\nUnit Price: ${moneyText(q.price)}\n\n✅ OPTION 1 (${q.firstDpPct??q.pctFirst??15}% DP)\nEstimated All-In DP: ${moneyText(first.totalDP)}\nMonthly Amortization:\n${first.monthly}\n\n✅ OPTION 2 (${q.otherDpPct}% DP)\nEstimated All-In DP: ${moneyText(second.totalDP)}\nMonthly Amortization:\n${second.monthly}\n${targetMonthlyText}${targetDpText}\n✅ ALL-IN INCLUSIONS\n✔ 1 Year Comprehensive Insurance\n✔ LTO Registration\n✔ Chattel mortgage\n✔ ${pmsBenefit}\n\n✅ FREEBIES\n${freebies}\n\nJM Betonio\n09053787903\nToyota Tarlac`;
 }
 
 function render(q){
   $('empty').hidden=true;$('out').hidden=false;
-  $('name').textContent=`${q.model} ${q.variant} · ${q.color}`;
-  $('total').textContent=money(q.total);
-  $('dpRows').innerHTML=row('Unit price',money(q.price))+row(`Initial DP (${q.dp}%)`,money(q.initial))+row('Amount financed',money(q.financed))+row('Insurance',money(q.insurance))+row('LTO',money(q.lto))+row(chattelLabel(category(q.dp),q.term),money(q.chattel))+row('DP subtotal before discounts',money(q.subtotal))+row('TDA discount (manual)','−'+money(q.tda))+row(`Promo discount for entered DP (${q.activePromoPct||0}%)`,'−'+money(q.promo))+row(`Promo discount for first DP (${q.firstDpPct}%)`,`${q.pctFirst||0}%`)+row(`Promo discount for second DP (${q.otherDpPct}%)`,`${q.pctOther||0}%`);
+  $('name').textContent=`${q.model} ${q.variant}${q.color?' · '+q.color:''}`;
 
   const optionBreakdown=o=>`<div class="notice"><b>${o.rate}% DP option</b>${row('Initial DP',money(o.initial))}${row('Amount financed',money(o.financed))}${row('Insurance',money(q.insurance))}${row('LTO',money(q.lto))}${row(chattelLabel(o.category,q.term),money(o.chattel))}${row('Subtotal before discounts',money(o.subtotal))}${row('TDA discount','−'+money(o.tda))}${row(`Promo discount (${q.promoStatus==='yes'?o.promoPct:0}%)`,'−'+money(o.promo))}${row('FINAL ALL-IN DP',money(o.totalDP))}${row(`Monthly for selected ${q.term} months`,monthlyDisplay(o.monthly))}</div>`;
   $('optionRows').innerHTML=optionBreakdown(q.optionFirst||q.option15)+optionBreakdown(q.optionOther);
-  $('monthlyRows').innerHTML=months.map(m=>row(`${m/12} years`,monthlyDisplay(monthlyFor(q.financed,m)))).join('');
 
   $('targetBlock').hidden=!q.targetDpResult;
   if(q.targetDpResult){
@@ -236,17 +232,37 @@ function render(q){
     $('targetMonthlyRows').innerHTML=row('Client target monthly',money(q.targetMonthly))+(!r.feasible?`<div class="notice">${esc(r.message)}</div>`:row('Required initial DP',money(r.neededInitial))+row('Required DP percentage',r.neededDpPct.toFixed(2)+'%')+row('Amount financed',money(r.neededFinanced))+row('Insurance','+'+money(r.insurance))+row('LTO','+'+money(r.lto))+row(`Chattel mortgage (${r.category}${r.category==='Financing'?', '+r.term/12+' years':''})`,'+'+money(r.chattel))+row('Subtotal before discounts',money(r.subtotal))+row('TDA discount','−'+money(r.tda))+row(`Promo discount (${r.promoPct}%)`,'−'+money(r.promo))+row('Estimated all-in DP',money(r.allInDP))+row(`Target monthly for ${r.term/12} years`,monthlyDisplay(r.estimatedMonthly))+months.filter(m=>m!==r.term).map(m=>row(`Alternative monthly for ${m/12} years`,monthlyDisplay(r.monthly[m]))).join('')+`<div class="hint">The selected ${r.term/12}-year term is the target-monthly basis. TDA and promo reduce cash-out only; they do not change the amount financed or target monthly.</div>`);
   }
 
-  $('pmsRow').innerHTML=row('Automatic PMS benefit',pmsFor(q.model,q.variant));
-  $('messenger').value=messenger(q);
+  // Results must render even if optional Messenger text generation encounters a problem.
+  try{$('messenger').value=messenger(q);}catch(messageError){$('messenger').value='';}
   $('textBox').hidden=true;
   $('status').textContent='';
 }
 
-$('form').onsubmit=e=>{
-  e.preventDefault();$('error').style.display='none';
-  try{current=calc(data());render(current);}
-  catch(err){$('error').textContent=err.message;$('error').style.display='block';}
-};
+$('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const errorBox=$('error');
+  errorBox.style.display='none';
+  // novalidate lets the calculator explain missing/invalid fields inside the page
+  // rather than having the browser silently stop the calculation at an off-screen field.
+  const invalid=Array.from($('form').elements).find(el=>el.willValidate && !el.checkValidity());
+  if(invalid){
+    const label=invalid.id ? document.querySelector(`label[for="${invalid.id}"]`) : null;
+    const fieldName=label ? label.textContent.replace(/\s*\*\s*$/,'') : (invalid.id || 'required field');
+    errorBox.textContent=`Please check ${fieldName}: ${invalid.validationMessage || 'enter a valid value.'}`;
+    errorBox.style.display='block';
+    invalid.focus();
+    return;
+  }
+  try{
+    current=calc(data());
+    render(current);
+  }catch(err){
+    errorBox.textContent=err && err.message ? err.message : 'The quotation could not be calculated. Please check the entered details.';
+    errorBox.style.display='block';
+  }
+});
+$('form').addEventListener('input',()=>{$('error').style.display='none';});
+$('form').addEventListener('change',()=>{$('error').style.display='none';});
 
 $('clear').onclick=()=>{
   if(confirm('Clear the form?')){
@@ -276,7 +292,7 @@ $('copy').onclick=async()=>{
 function history(){
   $('count').textContent=quotes.length;
   if(!quotes.length){$('history').innerHTML='No saved quotations yet.';return;}
-  $('history').innerHTML=quotes.map(q=>`<div class="history"><b>${esc(q.model)} · ${esc(q.color)}</b><div class="muted">${new Date(q.createdAt).toLocaleString()} · ${esc(q.term??60)} months</div><b>${money(q.total)} total DP</b><div class="actions"><button class="secondary" data-a="load" data-id="${esc(q.id)}">Load</button><button class="secondary" data-a="copy" data-id="${esc(q.id)}">Copy text</button><button class="danger" data-a="del" data-id="${esc(q.id)}">Delete</button></div></div>`).join('');
+  $('history').innerHTML=quotes.map(q=>`<div class="history"><b>${esc(q.model)} · ${esc(q.color||'No color specified')}</b><div class="muted">${new Date(q.createdAt).toLocaleString()} · ${esc(q.term??60)} months</div><b>Option 1: ${money(q.optionFirst?.totalDP??q.option15?.totalDP??0)} · Option 2: ${money(q.optionOther?.totalDP??0)}</b><div class="actions"><button class="secondary" data-a="load" data-id="${esc(q.id)}">Load</button><button class="secondary" data-a="copy" data-id="${esc(q.id)}">Copy text</button><button class="danger" data-a="del" data-id="${esc(q.id)}">Delete</button></div></div>`).join('');
 }
 
 $('history').onclick=async e=>{
@@ -285,7 +301,7 @@ $('history').onclick=async e=>{
   if(b.dataset.a==='del'&&confirm('Delete saved quotation?')){quotes=quotes.filter(x=>x.id!==q.id);persist();return;}
   if(b.dataset.a==='load'){
     $('model').value=q.model||'';$('model').dispatchEvent(new Event('change'));$('variant').value=q.variant||'';
-    ['color','price','dp','targetMonthly','targetDpAmount','targetDpPromoPct','insurance','lto','tda','promoStatus','firstDpPct','otherDpPct','promoPct15','promoPctOther'].forEach(k=>$(k).value=q[k]??'');
+    ['color','price','targetMonthly','targetDpAmount','targetDpPromoPct','insurance','lto','tda','promoStatus','firstDpPct','otherDpPct','promoPct15','promoPctOther'].forEach(k=>$(k).value=q[k]??'');
     $('chattelTerm').value=String(q.chattelTerm??q.term??60);
     ['promoField15','promoFieldOther'].forEach(id=>$(id).style.display=q.promoStatus==='yes'?'flex':'none');
     $('promoPct15').required=q.promoStatus==='yes';$('promoPctOther').required=q.promoStatus==='yes';
